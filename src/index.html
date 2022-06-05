@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<style>
+
+html, body, video {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+}
+
+progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+</style>
+
+<video controls>
+    <source src="" type="video/mp4">
+</video>
+
+<progress></progress>
+
+<script>
+
+    async function get(resource) {
+        const response = await fetch(resource);
+        if (!response.ok) {
+            return;
+        }
+        return await response.json();
+    }
+
+    async function getNext(afterId) {
+        if (afterId) {
+            return await get('video/next?after_id=' + afterId);
+        }
+        return await get('video/next');
+    }
+
+    async function deleteVideo(videoId) {
+        await fetch('/video/' + videoId, { method: 'DELETE' });
+    }
+
+    const progressEl = document.querySelector('progress');
+    const videoEl = document.querySelector('video');
+
+    let videoPromise = getNext();
+    let currentVideo;
+    async function loadNextVideo() {
+        if (currentVideo) {
+            await deleteVideo(currentVideo.id);
+        }
+
+        progressEl.style.display = 'block';
+        currentVideo = await videoPromise;
+        if (currentVideo) {
+            progressEl.style.display = 'none';
+            videoEl.src = `video-files/${currentVideo.id}.mp4`;
+            await videoEl.play().catch(() => {});
+            videoPromise = getNext(currentVideo.id);
+        }
+    }
+    
+    videoEl.addEventListener('ended', () => {
+        loadNextVideo().catch(console.error);
+    });
+
+    loadNextVideo().catch(console.error);
+    
+</script>
