@@ -20,20 +20,15 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str) -> Result<(), C
         return Err(ConvertError::InProgress);
     }
 
+    #[rustfmt::skip]
     let args = vec![
-        "--input",
-        input_path,
-        "--output",
-        &tmp_output_path,
-        "--format",
-        "av_mp4",
-        "--encoder",
-        "vt_h265",
-        "--quality",
-        "55",
+        "--input", input_path,
+        "--output", &tmp_output_path,
+        "--format", "av_mp4",
+        "--encoder", "vt_h265",
+        "--quality", "55",
         "--optimize",
-        "--aencoder",
-        "ca_aac",
+        "--aencoder", "ca_aac",
         "--no-comb-detect",
         "--no-deinterlace",
         "--no-detelecine",

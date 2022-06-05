@@ -3,7 +3,7 @@ use std::{env, path::PathBuf};
 use actix_files::Files;
 use actix_web::{delete, get, web, App, HttpResponse, HttpServer, Responder, ResponseError};
 use player::PlayerError;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 mod convert;
 mod player;
@@ -29,9 +29,12 @@ struct NextQuery {
 }
 
 #[get("/video/next")]
-async fn get_random(player: web::Data<player::Player>, query: web::Query<NextQuery>) -> Result<impl Responder, PlayerError> {
+async fn get_random(
+    player: web::Data<player::Player>,
+    query: web::Query<NextQuery>,
+) -> Result<impl Responder, PlayerError> {
     let query = query.into_inner();
-    
+
     if let Some(file) = player.get_next_file(query.after_id).await? {
         Ok(HttpResponse::Ok().json(Video { id: file.id }))
     } else {

@@ -84,7 +84,7 @@ impl Player {
                     .with_extension("mp4");
                 let input = file.original_path.to_str().unwrap();
                 convert_to_mp4(input, output.to_str().unwrap()).await?;
-                
+
                 file.path = Some(output);
                 let mut files = self.files.lock().unwrap();
                 files.iter_mut().find(|f| f.id == file.id).unwrap().path = file.path.clone();
