@@ -9,7 +9,7 @@ use walkdir::WalkDir;
 
 use crate::convert::{convert_to_mp4, ConvertError};
 
-const VIDEO_EXTENSIONS: [&str; 4] = ["mp4", "mkv", "avi", "mpg"];
+const VIDEO_EXTENSIONS: [&str; 5] = ["mp4", "mkv", "avi", "mpg", "wmv"];
 
 #[derive(Debug, thiserror::Error)]
 pub enum PlayerError {
