@@ -100,6 +100,7 @@ async fn probe_file(path: &str) -> Result<FfFormat, ConvertError> {
     let proc = Command::new("ffprobe")
         .args(args)
         .kill_on_drop(true)
+        .stdout(std::process::Stdio::piped())
         .spawn()?;
 
     let output = proc.wait_with_output().await?;
