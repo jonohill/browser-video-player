@@ -1,0 +1,32 @@
+services:
+
+  qbt:
+    image: cr.hotio.dev/hotio/qbittorrent:4.5.0
+    restart: always
+    ports:
+      - "9091:9091"
+    environment:
+      - WEBUI_PORTS=9091/tcp
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - VPN_ENABLED=true
+      - VPN_LAN_NETWORK=10.0.8.0/24
+      - VPN_CONF=wg0
+      - VPN_IP_CHECK_DELAY=5
+      - VPN_IP_CHECK_EXIT=true
+    volumes:
+      - ./config:/config
+      - ./media:/downloads
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=0
+
+  bvp:
+    image: ghcr.io/jonohill/browser-video-player:1
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./media:/media
