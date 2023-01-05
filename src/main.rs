@@ -35,8 +35,12 @@ async fn get_random(
 ) -> Result<impl Responder, PlayerError> {
     let query = query.into_inner();
 
-    if let Some(file) = player.get_next_file(query.after_id).await? {
-        Ok(HttpResponse::Ok().json(Video { id: file.id }))
+    if let Some(file) = player.get_next_file(query.after_id) {
+        if file.path.is_some() {
+            Ok(HttpResponse::Ok().json(Video { id: file.id }))
+        } else {
+            Ok(HttpResponse::ServiceUnavailable().finish())
+        }
     } else {
         Ok(HttpResponse::Gone().finish())
     }
@@ -47,7 +51,7 @@ async fn delete_video(
     player: web::Data<player::Player>,
     id: web::Path<String>,
 ) -> Result<impl Responder, PlayerError> {
-    player.delete(id.into_inner()).await?;
+    player.delete(id.into_inner(), false).await?;
     Ok(HttpResponse::NoContent().finish())
 }
 
@@ -66,12 +70,22 @@ async fn main() -> std::io::Result<()> {
         .expect("Please provide a path to a directory containing videos")
         .into();
 
-    let player = web::Data::new(player::Player::new(&first_arg));
+    let codec = env::args().nth(2);
+
+    let player = web::Data::new(player::Player::new(&first_arg, codec.as_deref()));
     let files_dir: String = player.files_dir().to_str().unwrap().to_string();
 
     log::info!("Serving static files from: {}", &files_dir);
 
-    HttpServer::new(move || {
+    let conversion_player = player.clone();
+    let conversion = async {
+        conversion_player.convert_all().await.map_err(|err| {
+            log::error!("Error converting files: {}", err);
+            std::io::Error::new(std::io::ErrorKind::Other, err)
+        })
+    };
+
+    let server = HttpServer::new(move || {
         App::new()
             .app_data(player.clone())
             .service(Files::new("/video-files", &files_dir))
@@ -79,7 +93,10 @@ async fn main() -> std::io::Result<()> {
             .service(delete_video)
             .service(get_root)
     })
-    .bind(("0.0.0.0", 8080))?
-    .run()
-    .await
+    .bind(("0.0.0.0", 8081))?
+    .run();
+
+    tokio::try_join!(server, conversion)?;
+
+    Ok(())
 }
