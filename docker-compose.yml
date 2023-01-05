@@ -1,7 +1,7 @@
 services:
 
   qbt:
-    image: cr.hotio.dev/hotio/qbittorrent:4.5.0
+    image: cr.hotio.dev/hotio/qbittorrent
     restart: always
     ports:
       - "9091:9091"
