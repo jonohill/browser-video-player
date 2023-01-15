@@ -21,8 +21,9 @@ jobs:
         run: |
           curl -fs https://circleci.com/api/v2/project/gh/jonohill/circle-gh-runner/pipeline \
             -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
             -H 'Circle-Token: ${{ secrets.CCI_TOKEN }}' \
-            -d '{
+            --data-binary '{
               "branch": "main",
               "parameters": {
                 "GH_REPO": "${{ github.repository }}",
