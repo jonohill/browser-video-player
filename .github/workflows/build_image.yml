@@ -23,12 +23,7 @@ jobs:
             -H 'Accept: application/json' \
             -H 'Content-Type: application/json' \
             -H 'Circle-Token: ${{ secrets.CCI_TOKEN }}' \
-            --data-binary '{
-              "branch": "main",
-              "parameters": {
-                "GH_REPO": "${{ github.repository }}",
-              }
-            }'
+            --data-binary '{ "branch": "main", "parameters": { "GH_REPO": "${{ github.repository }}" } }'
 
   build_x64:
     runs-on: ubuntu-latest
