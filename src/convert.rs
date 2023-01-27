@@ -41,7 +41,8 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
             "-f", "mp4",
         ];
         
-        if video.codec_name == "h264" || video.codec_name == "mpeg4" {
+        let codec_name = video.codec_name.clone().unwrap_or_else(|| "".into());
+        if codec_name == "h264" || codec_name == "mpeg4" {
             args.extend_from_slice(&["-c:v", "copy"]);
         } else {
             args.extend_from_slice(&["-c:v", codec, "-filter_complex", &scale]);
@@ -77,7 +78,7 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
 
 #[derive(Deserialize, Debug)]
 struct FfStream {
-    codec_name: String,
+    codec_name: Option<String>,
     codec_type: String,
 }
 
