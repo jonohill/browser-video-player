@@ -45,7 +45,7 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
         if codec_name == "h264" || codec_name == "mpeg4" {
             args.extend_from_slice(&["-c:v", "copy"]);
         } else {
-            args.extend_from_slice(&["-c:v", codec, "-filter_complex", &scale]);
+            args.extend_from_slice(&["-c:v", codec, "-preset", "ultrafast", "-filter_complex", &scale]);
         }
         args.push(tmp_output_path.as_str());
         
