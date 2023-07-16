@@ -42,7 +42,7 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
         ];
         
         let codec_name = video.codec_name.clone().unwrap_or_else(|| "".into());
-        if codec_name == "h264" || codec_name == "mpeg4" {
+        if codec_name == "h264" || codec_name == "mpeg4" || codec_name == "hevc" {
             args.extend_from_slice(&["-c:v", "copy"]);
         } else {
             args.extend_from_slice(&["-c:v", codec, "-preset", "ultrafast", "-filter_complex", &scale]);
