@@ -28,7 +28,7 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
     const MAX_W: u32 = 1920;
     const MAX_H: u32 = 1080;
     const FPS: f32 = 60.;
-    let vf = format!("scale=ceil(iw*min(1\\,min({}/iw\\,{}/ih))/2)*2:-1,fps={}", MAX_W, MAX_H, FPS);
+    let vf = format!("scale=ceil(iw*min(1\\,min({}/iw\\,{}/ih))/2)*2:-2,fps={}", MAX_W, MAX_H, FPS);
 
     let streams = probe_file(input_path).await?;
 
