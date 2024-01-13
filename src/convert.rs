@@ -27,7 +27,8 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
     let codec = codec.unwrap_or("libx264");
     const MAX_W: u32 = 1920;
     const MAX_H: u32 = 1080;
-    let scale = format!("scale=ceil(iw*min(1\\,min({}/iw\\,{}/ih))/2)*2:-1", MAX_W, MAX_H);
+    const FPS: f32 = 60.;
+    let vf = format!("scale=ceil(iw*min(1\\,min({}/iw\\,{}/ih))/2)*2:-1,fps={}", MAX_W, MAX_H, FPS);
 
     let streams = probe_file(input_path).await?;
 
@@ -42,10 +43,10 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
         ];
         
         let codec_name = video.codec_name.clone().unwrap_or_else(|| "".into());
-        if codec_name == "h264" || codec_name == "mpeg4" || codec_name == "hevc" {
+        if video.avg_frame_rate == FPS && (codec_name == "h264" || codec_name == "mpeg4" || codec_name == "hevc") {
             args.extend_from_slice(&["-c:v", "copy"]);
         } else {
-            args.extend_from_slice(&["-c:v", codec, "-preset", "ultrafast", "-filter_complex", &scale]);
+            args.extend_from_slice(&["-c:v", codec, "-preset", "ultrafast", "-filter_complex", &vf]);
         }
         args.push(tmp_output_path.as_str());
         
@@ -76,10 +77,29 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
     }
 }
 
+fn parse_framerate<'de, D>(deserializer: D) -> Result<f32, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+    let parts: Vec<&str> = s.split('/').collect();
+    if parts.len() == 1 {
+        return Ok(parts[0].parse::<f32>().unwrap());
+    }
+    if parts.len() == 2 {
+        let numerator = parts[0].parse::<f32>().unwrap();
+        let denominator = parts[1].parse::<f32>().unwrap();
+        return Ok(numerator / denominator);
+    }
+    Err(serde::de::Error::custom("invalid framerate"))
+}
+
 #[derive(Deserialize, Debug)]
 struct FfStream {
     codec_name: Option<String>,
     codec_type: String,
+    #[serde(deserialize_with = "parse_framerate")]
+    avg_frame_rate: f32,
 }
 
 #[derive(Deserialize, Debug)]
