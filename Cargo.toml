@@ -16,4 +16,4 @@ tempdir = "0.3.7"
 thiserror = "1.0.31"
 tokio = { version = "1.20.4", features = ["macros", "process"] }
 uuid = { version = "1.1.1", features = ["v4"] }
-walkdir = "2.3.2"
+walkdir = "2.5.0"
