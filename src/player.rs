@@ -82,7 +82,6 @@ impl Player {
             let input = file.original_path.to_str().unwrap();
             if let Err(err) = convert_to_mp4(input, output.to_str().unwrap(), self.codec.as_deref()).await {
                 log::error!("Ignoring file due to conversion error: {}", err);
-                self.delete(file.id, true).await?;
                 continue;
             }
 

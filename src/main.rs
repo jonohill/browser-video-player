@@ -46,12 +46,19 @@ async fn get_random(
     }
 }
 
+#[derive(Deserialize)]
+struct DeleteQuery {
+    keep: Option<bool>,
+}
+
 #[delete("/video/{id}")]
 async fn delete_video(
     player: web::Data<player::Player>,
     id: web::Path<String>,
+    query: web::Query<DeleteQuery>,
 ) -> Result<impl Responder, PlayerError> {
-    player.delete(id.into_inner(), false).await?;
+    let keep = query.into_inner().keep.unwrap_or(false);
+    player.delete(id.into_inner(), keep).await?;
     Ok(HttpResponse::NoContent().finish())
 }
 

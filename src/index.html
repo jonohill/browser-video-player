@@ -42,18 +42,28 @@ progress {
         return await get('video/next');
     }
 
-    async function deleteVideo(videoId) {
-        await fetch('/video/' + videoId, { method: 'DELETE' });
+    async function deleteVideo(videoId, keep) {
+        await fetch('/video/' + videoId + '?keep=' + keep, { method: 'DELETE' });
     }
 
     const progressEl = document.querySelector('progress');
     const videoEl = document.querySelector('video');
 
+    videoEl.onerror = evt => {
+        console.error('Error loading video');
+        console.error(evt);
+        if (currentVideo) {
+            deleteVideo(currentVideo.id, true)
+                .then(() => loadNextVideo())
+                .catch(console.error);
+        }
+    };
+
     let videoPromise = getNext();
     let currentVideo;
     async function loadNextVideo() {
         if (currentVideo) {
-            await deleteVideo(currentVideo.id);
+            await deleteVideo(currentVideo.id, false);
         }
 
         progressEl.style.display = 'block';
@@ -61,7 +71,7 @@ progress {
         if (currentVideo) {
             progressEl.style.display = 'none';
             videoEl.src = `video-files/${currentVideo.id}.mp4`;
-            await videoEl.play().catch(() => {});
+            await videoEl.play().catch(console.error);
             videoPromise = getNext(currentVideo.id);
         }
     }

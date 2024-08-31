@@ -27,8 +27,7 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
     let codec = codec.unwrap_or("libx264");
     const MAX_W: u32 = 1920;
     const MAX_H: u32 = 1080;
-    const FPS: f32 = 50.;
-    let vf = format!("scale=ceil(iw*min(1\\,min({}/iw\\,{}/ih))/2)*2:-2,fps={}", MAX_W, MAX_H, FPS);
+    let vf = format!("scale=ceil(iw*min(1\\,min({}/iw\\,{}/ih))/2)*2:-2", MAX_W, MAX_H);
 
     let streams = probe_file(input_path).await?;
 
@@ -43,7 +42,7 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
         ];
         
         let codec_name = video.codec_name.clone().unwrap_or_else(|| "".into());
-        if video.avg_frame_rate == FPS && (codec_name == "h264" || codec_name == "mpeg4" || codec_name == "hevc") {
+        if codec_name == "h264" || codec_name == "mpeg4" || codec_name == "hevc" {
             args.extend_from_slice(&["-c:v", "copy"]);
         } else {
             args.extend_from_slice(&["-c:v", codec, "-preset", "ultrafast", "-filter_complex", &vf]);
@@ -98,8 +97,6 @@ where
 struct FfStream {
     codec_name: Option<String>,
     codec_type: String,
-    #[serde(deserialize_with = "parse_framerate")]
-    avg_frame_rate: f32,
 }
 
 #[derive(Deserialize, Debug)]
