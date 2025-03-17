@@ -9,7 +9,7 @@ use walkdir::{WalkDir, DirEntry};
 
 use crate::convert::{convert_to_mp4, ConvertError};
 
-const VIDEO_EXTENSIONS: [&str; 10] = ["mp4", "mkv", "avi", "mpg", "wmv", "webm", "ts", "mov", "flv", "f4v"];
+const VIDEO_EXTENSIONS: [&str; 11] = ["mp4", "mkv", "avi", "mpg", "wmv", "webm", "ts", "mov", "flv", "f4v", "m4v"];
 
 fn get_media_files(path: &Path) -> impl Iterator<Item = DirEntry> {
     WalkDir::new(path)
@@ -19,7 +19,7 @@ fn get_media_files(path: &Path) -> impl Iterator<Item = DirEntry> {
             entry.file_type().is_file()
                 && entry.path().extension().is_some()
                 && VIDEO_EXTENSIONS
-                    .contains(&entry.path().extension().unwrap().to_str().unwrap())
+                    .contains(&entry.path().extension().unwrap().to_ascii_lowercase().to_str().unwrap())
         })
 }
 
