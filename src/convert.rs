@@ -37,6 +37,7 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
         let mut args = vec![
             "-i", input_path,
             "-movflags", "faststart",
+            "-af", "afftdn",
             "-c:a", "aac",
             "-f", "mp4",
         ];
