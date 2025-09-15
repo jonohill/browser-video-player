@@ -4,5 +4,6 @@
     "config:base"
   ],
 
-  "automerge": true
+  "automerge": true,
+  "minimumReleaseAge": "2 weeks"
 }
