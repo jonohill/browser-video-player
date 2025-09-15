@@ -37,7 +37,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max          
           tags: "${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}/linux/amd64:${{ github.run_number }}"          
@@ -65,13 +65,14 @@ jobs:
         with:
           context: .
           platforms: linux/arm64
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max          
           tags: "${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}/linux/arm64:${{ github.run_number }}"     
 
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
 
     needs: [build_x64, build_arm64]
 
