@@ -39,9 +39,9 @@ pub async fn convert_to_mp4(input_path: &str, output_path: &str, codec: Option<&
     let model_path = crate::rnnoise::get_model_path();
     let model_path_str = model_path.to_str().unwrap();
     let af = if denoise {
-        format!("arnndn=m={},afftdn", model_path_str)
+        format!("arnndn=m={}:mix=0.5", model_path_str)
     } else {
-        "afftdn".to_string()
+        "anull".to_string()
     };
 
     let streams = probe_file(input_path).await?;

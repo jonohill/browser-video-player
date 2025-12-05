@@ -5,6 +5,6 @@ cargo run --release -- \
     --codec hevc_videotoolbox \
     --always-reencode \
     --denoise \
-    --buffer-count 5
+    --buffer-count 10
 
     # --no-delete \
