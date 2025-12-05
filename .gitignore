@@ -1,1 +1,3 @@
 /target
+/vids*
+.DS_Store
