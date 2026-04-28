@@ -1,4 +1,4 @@
-FROM rust:1.94.0 AS builder
+FROM rust:1.94.1 AS builder
 
 WORKDIR /usr/src/bvp
 COPY . .
