@@ -1,11 +1,11 @@
-FROM rust:1.91.0 AS builder
+FROM rust:1.97.0 AS builder
 
 WORKDIR /usr/src/bvp
 COPY . .
 
 RUN cargo install --path .
 
-FROM debian:13.2-slim
+FROM debian:13.6-slim
 
 RUN apt-get update && apt-get install -y ffmpeg
 
