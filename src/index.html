@@ -154,18 +154,28 @@ progress {
 
     let videoPromise = getNext();
     let currentVideo;
-    async function loadNextVideo() {
-        if (currentVideo) {
-            await deleteVideo(currentVideo.id, false);
+    let loadingNext = false;
+    async function loadNextVideo(keepCurrent = false) {
+        // Without this, a double keypress deletes the video that was never shown
+        if (loadingNext) {
+            return;
         }
+        loadingNext = true;
+        try {
+            if (currentVideo) {
+                await deleteVideo(currentVideo.id, keepCurrent);
+            }
 
-        progressEl.style.display = 'block';
-        currentVideo = await videoPromise;
-        if (currentVideo) {
-            progressEl.style.display = 'none';
-            videoEl.src = `video-files/${currentVideo.id}.mp4`;
-            await videoEl.play().catch(console.error);
-            videoPromise = getNext(currentVideo.id);
+            progressEl.style.display = 'block';
+            currentVideo = await videoPromise;
+            if (currentVideo) {
+                progressEl.style.display = 'none';
+                videoEl.src = `video-files/${currentVideo.id}.mp4`;
+                await videoEl.play().catch(console.error);
+                videoPromise = getNext(currentVideo.id);
+            }
+        } finally {
+            loadingNext = false;
         }
     }
     
@@ -261,6 +271,28 @@ progress {
         }, 1000);
     });
     
+    // Keyboard controls
+    const SEEK_BACK_SECONDS = 15;
+    const SEEK_FORWARD_SECONDS = 30;
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            videoEl.currentTime = Math.max(0, videoEl.currentTime - SEEK_BACK_SECONDS);
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            const target = videoEl.currentTime + SEEK_FORWARD_SECONDS;
+            videoEl.currentTime = isFinite(videoEl.duration)
+                ? Math.min(videoEl.duration, target)
+                : target;
+        } else if (e.key === 'n') {
+            e.preventDefault();
+            loadNextVideo(true).catch(console.error);
+        } else if (e.key === 'Delete' || e.key === 'Backspace') {
+            e.preventDefault();
+            loadNextVideo(false).catch(console.error);
+        }
+    });
+
     // Placeholder menu item action
     document.querySelector('.menu-item').addEventListener('click', () => {
         if (currentVideo) {
