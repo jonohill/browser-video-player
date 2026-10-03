@@ -5,7 +5,7 @@ COPY . .
 
 RUN cargo install --path .
 
-FROM debian:13.6-slim
+FROM debian:13.7-slim
 
 RUN apt-get update && apt-get install -y ffmpeg
 
