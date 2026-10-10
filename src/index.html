@@ -178,19 +178,19 @@ progress {
             loadingNext = false;
         }
     }
-    
+
     videoEl.addEventListener('ended', () => {
         loadNextVideo().catch(console.error);
     });
 
     loadNextVideo().catch(console.error);
-    
+
     // Menu visibility controls
     const menuButton = document.querySelector('.menu');
     const menuDropdown = document.querySelector('.menu-dropdown');
     let hideMenuTimeout;
     let isMenuOpen = false;
-    
+
     function showMenu() {
         menuButton.classList.add('visible');
         clearTimeout(hideMenuTimeout);
@@ -198,21 +198,21 @@ progress {
             menuButton.classList.remove('visible');
         }, 3000); // Hide after 3 seconds
     }
-    
+
     function hideMenu() {
         menuButton.classList.remove('visible');
         clearTimeout(hideMenuTimeout);
     }
-    
+
     // Show menu on mouse move or touch
     document.addEventListener('mousemove', showMenu);
     document.addEventListener('touchstart', showMenu);
-    
+
     // Keep menu visible when hovering over it
     menuButton.addEventListener('mouseenter', () => {
         clearTimeout(hideMenuTimeout);
     });
-    
+
     menuButton.addEventListener('mouseleave', () => {
         if (!isMenuOpen) {
             hideMenuTimeout = setTimeout(() => {
@@ -220,12 +220,12 @@ progress {
             }, 1000); // Shorter timeout when leaving the button
         }
     });
-    
+
     // Menu dropdown controls
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
         menuDropdown.classList.toggle('visible', isMenuOpen);
-        
+
         if (isMenuOpen) {
             clearTimeout(hideMenuTimeout);
         } else {
@@ -237,30 +237,30 @@ progress {
             }, 1000);
         }
     }
-    
+
     function closeMenu() {
         isMenuOpen = false;
         menuDropdown.classList.remove('visible');
     }
-    
+
     // Click menu button to toggle dropdown
     menuButton.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleMenu();
     });
-    
+
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (!menuDropdown.contains(e.target) && !menuButton.contains(e.target)) {
             closeMenu();
         }
     });
-    
+
     // Keep menu visible when hovering over dropdown
     menuDropdown.addEventListener('mouseenter', () => {
         clearTimeout(hideMenuTimeout);
     });
-    
+
     menuDropdown.addEventListener('mouseleave', () => {
         if (!isMenuOpen) return;
         hideMenuTimeout = setTimeout(() => {
@@ -270,7 +270,7 @@ progress {
             }
         }, 1000);
     });
-    
+
     // Keyboard controls
     const SEEK_BACK_SECONDS = 15;
     const SEEK_FORWARD_SECONDS = 30;
@@ -284,7 +284,12 @@ progress {
             videoEl.currentTime = isFinite(videoEl.duration)
                 ? Math.min(videoEl.duration, target)
                 : target;
-        } else if (e.key === 'n') {
+        } else if (e.key === '/') {
+            e.preventDefault();
+            if (isFinite(videoEl.duration)) {
+                videoEl.currentTime += (videoEl.duration - videoEl.currentTime) / 2;
+            }
+        } else if (e.key === '.') {
             e.preventDefault();
             loadNextVideo(true).catch(console.error);
         } else if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -303,5 +308,5 @@ progress {
 
         closeMenu();
     });
-    
+
 </script>
