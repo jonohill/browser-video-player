@@ -45,16 +45,17 @@ dependencies = [
 
 [[package]]
 name = "actix-http"
-version = "3.20.0"
+version = "3.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d20a22850ea7fecad12c5f8cd97d246c3af1f04ef400033977c2f13425c45816"
+checksum = "50f98f47b03911915aa3f0b856749aa3d3915033afabb295ab6ac5ff3b8bd5c1"
 dependencies = [
  "actix-codec",
  "actix-service",
  "actix-utils",
- "base64 0.22.1",
+ "base64",
  "bitflags",
  "brotli",
+ "brotli-decompressor",
  "bytes",
  "bytestring",
  "derive_more",
@@ -155,9 +156,9 @@ dependencies = [
 
 [[package]]
 name = "actix-web"
-version = "4.18.1"
+version = "4.18.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81f8da0d2ae4200dde8773d72ba47a65c220b251ba7b9248db5bd263c247e959"
+checksum = "697d10a06f7a550791dcb963e3090aa5c65c4d94c029114814a4bd652f30f0b4"
 dependencies = [
  "actix-codec",
  "actix-http",
@@ -294,12 +295,6 @@ name = "anyhow"
 version = "1.0.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
-
-[[package]]
-name = "base64"
-version = "0.22.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
 name = "base64"
@@ -1750,7 +1745,7 @@ version = "3.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e7be76686bdf7198002062423ca0d8cf9b75a27c8e1de804513b97e97b555d9d"
 dependencies = [
- "base64 0.23.1",
+ "base64",
  "flate2",
  "log",
  "percent-encoding",
@@ -1767,7 +1762,7 @@ version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "622dce33c252115466d83f63e9744a18f12b4406aae51a01c15ad8fcf1185eb3"
 dependencies = [
- "base64 0.23.1",
+ "base64",
  "http 1.4.0",
  "httparse",
  "log",
